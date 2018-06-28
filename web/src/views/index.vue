@@ -28,7 +28,7 @@
                 <Col span="24">
                     <Row v-if="!sessionJoined">
                         <Col span="24">
-                                <Input v-model="user" placeholder="Enter your name..." size="large" style="max-width: 400px"/>
+                                <Input v-model="playerName" placeholder="Enter your name..." size="large" style="max-width: 400px"/>
                         
                         </Col>
                     </Row>
@@ -47,7 +47,7 @@
                         </Col>
                     </Row>
                     <Row v-if="sessionJoined">
-                        <Col span="24">Welcome {{this.user}}, please vote your point.</Col>
+                        <Col span="24">Welcome {{playerName}}, please vote your point.</Col>
                     </Row>
                     <Row v-if="sessionJoined">
                         <Col span="24">                               
@@ -84,12 +84,6 @@
                         <Col span="24" ><Button type="text" style="font-size:20pt;" @click="quickSession"><Icon type="android-exit"></Icon></Button></Col>
                     </Row>
 
-
-
-
-
-
-
                 </Col>
             </Row>
         </Content>
@@ -105,9 +99,11 @@ import io from "socket.io-client";
 export default {
   data() {
     return {
-      user: "",
-      point: "",
       socket: {},
+      playerName: "",
+      point: "",
+      sessionJoined: false,
+      session: { id: "", showVotes: false },
       columns: [
         {
           title: "Name",
@@ -118,11 +114,11 @@ export default {
           key: "point",
           align: "center",
           render: (h, params) => {
-            if (this.session.showVotes || params.row.name == this.user) {
+            if (this.session.showVotes || params.row.name == this.playerName) {
               return params.row.point > 0
                 ? h("span", params.row.point)
                 : h("Icon", { props: { type: "help" } });
-              //} else if(params.row.name==this.user){
+              //} else if(params.row.name==this.playerName){
               //  return h("span", params.row.point);
             } else {
               return h("Icon", {
@@ -134,14 +130,12 @@ export default {
             }
           }
         }
-      ],
-      session: { id: "", showVotes: false },
-      sessionJoined: false
+      ]
     };
   },
   methods: {
     createSession() {
-      if (this.user == "") {
+      if (this.playerName == "") {
         this.$Message.error({
           content: "Please enter name.",
           closable: true
@@ -149,12 +143,12 @@ export default {
         return;
       }
       this.socket.emit("create session", {
-        name: this.user,
+        name: this.playerName,
         sessionId: this.session.id
       });
     },
     joinSession() {
-      if (this.user == "") {
+      if (this.playerName == "") {
         this.$Message.error({
           content: "Please enter name.",
           closable: true
@@ -162,7 +156,7 @@ export default {
         return;
       }
       this.socket.emit("join session", {
-        name: this.user,
+        name: this.playerName,
         sessionId: this.session.id
       });
     },
@@ -175,11 +169,11 @@ export default {
         return;
       }
       let player = this.session.players.find(player => {
-        return player.name == this.user;
+        return player.name == this.playerName;
       });
       player.point = this.point;
       this.socket.emit("vote", {
-        name: this.user,
+        name: this.playerName,
         sessionId: this.session.id,
         point: this.point
       });
@@ -193,7 +187,7 @@ export default {
     quickSession() {
       this.sessionJoined = false;
       this.socket.emit("quit session", {
-        name: this.user,
+        name: this.playerName,
         sessionId: this.session.id
       });
     }
@@ -258,6 +252,10 @@ export default {
     });
 
     this.socket.on("votes toggled", data => {
+      this.session = data;
+    });
+
+    this.socket.on("session updated", data => {
       this.session = data;
     });
 
