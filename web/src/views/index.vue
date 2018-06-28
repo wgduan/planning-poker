@@ -14,40 +14,56 @@
 //     padding: 3px;
 //   }
 // }
+.index{
+  max-width: 400px;
+}
+.layout{
+  width:100%;
+  text-align:center;
+  display:inline-block;
+}
 .ivu-row {
   padding: 5px;
 }
 </style>
 <template>
-    <div class="index">
-        <Layout>
+    <div style="max-width:400px;margin:0 auto; text-align:center;" >
+        <!-- <Layout class="layout">
         
-        <Content style="text-align:center">
-            <br/>
-            <Row   >
+        <Content >
+            <br/> -->
+            
+            <!-- <Row   >
                 <Col span="24">
+                     -->
+                    <Row type="flex" style="background-color:#eee;padding:10px;" align="middle">
+                      <Col span="12" align="left"><h2>Planning Poker</h2> </Col>
+                      <Col span="12" align="right">
+                        <div v-if="sessionJoined">
+                          <a href="#" @click="quickSession"><Icon type="android-exit" size="24"></Icon></a>
+                        </div>
+                      </Col>
+                    </Row>
                     <Row v-if="!sessionJoined">
                         <Col span="24">
-                                <Input v-model="playerName" placeholder="Enter your name..." size="large" style="max-width: 400px"/>
-                        
+                            <Input v-model="playerName" placeholder="Enter your name..." size="large"  />
                         </Col>
                     </Row>
                     <Row v-if="!sessionJoined">
                         <Col span="24">
-
-                                <Input v-model="session.id" placeholder="Enter Session ID..." size="large" style="max-width: 400px"/>
+                            <Input v-model="session.id" placeholder="Enter Session ID..." size="large" />
                         </Col>
                     </Row>
                     <Row :gutter="5" v-if="!sessionJoined">
-                        <Col span="12" align="right">
-                                <i-button type="primary" size="large" style="width:150px"  @click="joinSession">Join</i-button>
+                        <Col span="12" >
+                                <i-button type="primary" size="large" style="width:100%"  @click="joinSession">Join</i-button>
                         </Col>
-                        <Col span="12" align="left">
-                                <i-button type="primary" size="large" style="width:150px"  @click="createSession">Create new session</i-button>
+                        <Col span="12" >
+                                <i-button type="primary" size="large" style="width:100%"  @click="createSession">Create new session</i-button>
                         </Col>
                     </Row>
                     <Row v-if="sessionJoined">
-                        <Col span="24">Welcome {{playerName}}, please vote your point.</Col>
+                        <Col span="24"><h3>Please vote your point.</h3></Col>
                     </Row>
                     <Row v-if="sessionJoined">
                         <Col span="24">                               
@@ -67,28 +83,28 @@
                         </Col>
                     </Row>
                     <Row :gutter="5"  v-if="sessionJoined">
-                        <Col span="12" align="right">
-                                <i-button type="primary" size="large" style="width:150px"  @click="toggleVotes">{{(this.session.showVotes)?'Hide':'Show'}} Votes</i-button>
+                        <Col span="12" >
+                                <i-button type="primary" size="large" style="width:100%"  @click="toggleVotes">{{(this.session.showVotes)?'Hide':'Show'}} Votes</i-button>
                         </Col>
-                        <Col span="12" align="left">
-                                <i-button type="primary" size="large" style="width:150px"  @click="cleanVotes">Clean Votes</i-button>
+                        <Col span="12" >
+                                <i-button type="primary" size="large" style="width:100%"  @click="cleanVotes">Clean Votes</i-button>
 
                         </Col>
                     </Row>                
                     <Row  v-if="sessionJoined">
                         <Col span="24" align="center">
-                                <Table :columns="columns" :data="session.players" style="max-width: 400px" size="large" no-data-text="No player"></Table>
+                                <Table :columns="columns" :data="session.players" size="large" no-data-text="No player"></Table>
                         </Col>
                     </Row>
-                    <Row v-if="sessionJoined">
+                    <!-- <Row v-if="sessionJoined">
                         <Col span="24" ><Button type="text" style="font-size:20pt;" @click="quickSession"><Icon type="android-exit"></Icon></Button></Col>
-                    </Row>
+                    </Row> -->
 
-                </Col>
-            </Row>
-        </Content>
+                <!-- </Col>
+            </Row> -->
+        <!-- </Content>
         <Footer style="text-align:center"></Footer>
-        </Layout>
+        </Layout> -->
 
         
     </div>
@@ -137,7 +153,7 @@ export default {
     createSession() {
       if (this.playerName == "") {
         this.$Message.error({
-          content: "Please enter name.",
+          content: "Please enter your name.",
           closable: true
         });
         return;
@@ -150,11 +166,18 @@ export default {
     joinSession() {
       if (this.playerName == "") {
         this.$Message.error({
-          content: "Please enter name.",
+          content: "Please enter your name.",
           closable: true
         });
         return;
       }
+      if (this.session.id == "") {
+        this.$Message.error({
+          content: "Please enter session ID.",
+          closable: true
+        });
+        return;
+      }      
       this.socket.emit("join session", {
         name: this.playerName,
         sessionId: this.session.id

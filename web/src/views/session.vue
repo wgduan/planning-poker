@@ -1,6 +1,17 @@
+<style scoped lang="less">
+body{
+  background-color: darkgrey;
+}
+.session {
+  width: 400px;
+  text-align: center;
+  background-color:cadetblue;
+  margin:0 auto;
+}
+</style>
 <template>
-    <div class="session">
-        <Row type="flex" justify="center" align="middle">
+    <div style="max-width:400px;margin:0 auto; text-align:center;">
+        <Row type="flex" justify="center" >
             <Col span="24">
                 <div>Session: {{$route.params.id}}</div>
                 <div>Player: {{player}}</div>                
@@ -63,30 +74,5 @@ export default {
   }
 };
 </script>
-<style scoped lang="less">
-.session {
-  width: 100%;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  text-align: center;
-  h1 {
-    height: 150px;
-    img {
-      height: 100%;
-    }
-  }
-  h2 {
-    color: #666;
-    margin-bottom: 200px;
-    p {
-      margin: 0 0 50px;
-    }
-  }
-  .ivu-row-flex {
-    height: 100%;
-  }
-}
-</style>
+
 

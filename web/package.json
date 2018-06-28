@@ -16,14 +16,10 @@
   "license": "MIT",
   "dependencies": {
     "iview": "^2.0.0-rc.8",
-    "net": "^1.0.2",
     "promise-polyfill": "8.0.0",
     "socket.io": "^2.1.1",
-    "tls": "0.0.1",
     "vue": "^2.2.6",
-    "vue-router": "^2.2.1",
-    "websocket": "^1.0.26",
-    "ws": "^5.2.0"
+    "vue-router": "^2.2.1"
   },
   "devDependencies": {
     "autoprefixer-loader": "^2.0.0",
