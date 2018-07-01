@@ -97,6 +97,7 @@
       </Row>
       <br/>
       <hr/>
+      <br/>
       <Row type="flex" align="middle">
         <Col span="24" align="center">
           @ 2018 David Duan &nbsp;&nbsp;<a href="https://github.com/wgduan/planning-poker" ><Icon type="social-github" size="24" color="gray"></Icon></a>
