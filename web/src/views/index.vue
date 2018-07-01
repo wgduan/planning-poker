@@ -241,7 +241,9 @@ export default {
       this.sessionId = this.$route.params.id;
     }
 
-    this.socket = io("http://localhost:3000");
+    //this.socket = io("http://localhost:3000");
+    //this.socket = io("http://localhost:8080");
+    this.socket = io("http://duanwg.eastasia.cloudapp.azure.com:8080");
 
     this.socket.on("session created", session => {
       console.log("session created: " + session);
