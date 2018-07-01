@@ -33,8 +33,8 @@
         <Col span="12" align="left"><h2>Planning Poker</h2> </Col>
         <Col span="12" align="right">
           <div v-if="sessionJoined">
-            <a href="Javascrpipt:void(0);" @click="refreshSession"><Icon type="refresh" size="24"></Icon></a>&nbsp;
-            <a href="Javascrpipt:void(0);" @click="quickSession"><Icon type="android-exit" size="24"></Icon></a>
+            <a href="Javascrpipt:void(0);" @click="refreshSession" title="Refresh"><Icon type="refresh" size="24"></Icon></a>&nbsp;&nbsp;&nbsp;
+            <a href="Javascrpipt:void(0);" @click="quickSession" title="Quit"><Icon type="android-exit" size="24"></Icon></a>
           </div>
         </Col>
       </Row>
@@ -97,9 +97,9 @@
       </Row>
       <br/>
       <hr/>
-      <Row>
+      <Row type="flex" align="middle">
         <Col span="24" align="center">
-          <a href="https://github.com/wgduan/planning-poker" ><Icon type="social-github" size="24" color="gray"></Icon></a>
+          @ 2018 David Duan &nbsp;&nbsp;<a href="https://github.com/wgduan/planning-poker" ><Icon type="social-github" size="24" color="gray"></Icon></a>
         </Col>
       </Row>
     </div>
