@@ -14,13 +14,13 @@
 //     padding: 3px;
 //   }
 // }
-.index{
+.index {
   max-width: 400px;
 }
-.layout{
-  width:100%;
-  text-align:center;
-  display:inline-block;
+.layout {
+  width: 100%;
+  text-align: center;
+  display: inline-block;
 }
 .ivu-row {
   padding: 5px;
@@ -28,83 +28,73 @@
 </style>
 <template>
     <div style="max-width:400px;margin:0 auto; text-align:center;" >
-        <!-- <Layout class="layout">
-        
-        <Content >
-            <br/> -->
-            
-            <!-- <Row   >
-                <Col span="24">
-                     -->
-                    <Row type="flex" style="background-color:#eee;padding:10px;" align="middle">
-                      <Col span="12" align="left"><h2>Planning Poker</h2> </Col>
-                      <Col span="12" align="right">
-                        <div v-if="sessionJoined">
-                          <a href="#" @click="quickSession"><Icon type="android-exit" size="24"></Icon></a>
-                        </div>
-                      </Col>
-                    </Row>
-                    <Row v-if="!sessionJoined">
-                        <Col span="24">
-                            <Input v-model="playerName" placeholder="Enter your name..." size="large"  />
-                        </Col>
-                    </Row>
-                    <Row v-if="!sessionJoined">
-                        <Col span="24">
-                            <Input v-model="session.id" placeholder="Enter Session ID..." size="large" />
-                        </Col>
-                    </Row>
-                    <Row :gutter="5" v-if="!sessionJoined">
-                        <Col span="12" >
-                                <i-button type="primary" size="large" style="width:100%"  @click="joinSession">Join</i-button>
-                        </Col>
-                        <Col span="12" >
-                                <i-button type="primary" size="large" style="width:100%"  @click="createSession">Create new session</i-button>
-                        </Col>
-                    </Row>
-                    <Row v-if="sessionJoined">
-                        <Col span="24"><h3>Please vote your point.</h3></Col>
-                    </Row>
-                    <Row v-if="sessionJoined">
-                        <Col span="24">                               
-        
-                                <RadioGroup v-model="point" type="button" @on-change="vote" size="large">
-                                    <Radio label="1"></Radio>
-                                    <Radio label="2"></Radio>
-                                    <Radio label="3"></Radio>
-                                    <Radio label="5"></Radio>
-                                    <Radio label="8"></Radio>
-                                    <Radio label="13"></Radio>
-                                    <Radio label="20"></Radio>
-                                    <Radio label="40"></Radio>
-                                    <Radio label="100"></Radio>
-                                </RadioGroup>                                          
 
-                        </Col>
-                    </Row>
-                    <Row :gutter="5"  v-if="sessionJoined">
-                        <Col span="12" >
-                                <i-button type="primary" size="large" style="width:100%"  @click="toggleVotes">{{(this.session.showVotes)?'Hide':'Show'}} Votes</i-button>
-                        </Col>
-                        <Col span="12" >
-                                <i-button type="primary" size="large" style="width:100%"  @click="cleanVotes">Clean Votes</i-button>
+      <Row type="flex" style="background-color:#eee;padding:10px;" align="middle">
+        <Col span="12" align="left"><h2>Planning Poker</h2> </Col>
+        <Col span="12" align="right">
+          <div v-if="sessionJoined">
+            <a href="javascript:void()" @click="refreshSession"><Icon type="refresh" size="24"></Icon></a>&nbsp;
+            <a href="javascript:void()" @click="quickSession"><Icon type="android-exit" size="24"></Icon></a>
+          </div>
+        </Col>
+      </Row>
+      <Row v-if="!sessionJoined">
+          <Col span="24">
+              <Input v-model="playerName" placeholder="Enter your name..." size="large"  />
+          </Col>
+      </Row>
+      <Row v-if="!sessionJoined">
+          <Col span="24">
+              <Input v-model="sessionId" placeholder="Enter Session ID..." size="large" />
+          </Col>
+      </Row>
+      <Row :gutter="5" v-if="!sessionJoined">
+          <Col span="12" >
+                  <i-button type="primary" size="large" style="width:100%"  @click="joinSession">Join</i-button>
+          </Col>
+          <Col span="12" >
+                  <i-button type="primary" size="large" style="width:100%"  @click="createSession">Create new session</i-button>
+          </Col>
+      </Row>
+      <Row v-if="sessionJoined">
+          <Col span="24"><h3>Please vote your point.</h3></Col>
+      </Row>
+      <Row v-if="sessionJoined">
+          <Col span="24">                               
 
-                        </Col>
-                    </Row>                
-                    <Row  v-if="sessionJoined">
-                        <Col span="24" align="center">
-                                <Table :columns="columns" :data="session.players" size="large" no-data-text="No player"></Table>
-                        </Col>
-                    </Row>
-                    <!-- <Row v-if="sessionJoined">
-                        <Col span="24" ><Button type="text" style="font-size:20pt;" @click="quickSession"><Icon type="android-exit"></Icon></Button></Col>
-                    </Row> -->
+                  <RadioGroup v-model="point" type="button" @on-change="vote" size="large">
+                      <Radio label="1"></Radio>
+                      <Radio label="2"></Radio>
+                      <Radio label="3"></Radio>
+                      <Radio label="5"></Radio>
+                      <Radio label="8"></Radio>
+                      <Radio label="13"></Radio>
+                      <Radio label="20"></Radio>
+                      <Radio label="40"></Radio>
+                      <Radio label="100"></Radio>
+                  </RadioGroup>                                          
 
-                <!-- </Col>
-            </Row> -->
-        <!-- </Content>
-        <Footer style="text-align:center"></Footer>
-        </Layout> -->
+          </Col>
+      </Row>
+      <Row :gutter="5"  v-if="sessionJoined">
+          <Col span="12" >
+                  <i-button type="primary" size="large" style="width:100%"  @click="toggleVotes">{{(this.session.showVotes)?'Hide':'Show'}} Votes</i-button>
+          </Col>
+          <Col span="12" >
+                  <i-button type="primary" size="large" style="width:100%"  @click="cleanVotes">Clean Votes</i-button>
+
+          </Col>
+      </Row>                
+      <Row  v-if="sessionJoined">
+          <Col span="24" align="center">
+                  <Table :columns="columns" :data="session.players" size="large" no-data-text="No player"></Table>
+          </Col>
+      </Row>
+      <Row  v-if="sessionJoined&&showVotes">
+          <Col span="24" align="center">
+                  <Table :columns="summaryColumns" :data="summary" size="large" no-data-text="No result"></Table>
+          </Col>
+      </Row>
 
         
     </div>
@@ -119,7 +109,10 @@ export default {
       playerName: "",
       point: "",
       sessionJoined: false,
+      sessionId: "",
+      showVotes: false,
       session: { id: "", showVotes: false },
+      summary: [],
       columns: [
         {
           title: "Name",
@@ -134,8 +127,6 @@ export default {
               return params.row.point > 0
                 ? h("span", params.row.point)
                 : h("Icon", { props: { type: "help" } });
-              //} else if(params.row.name==this.playerName){
-              //  return h("span", params.row.point);
             } else {
               return h("Icon", {
                 props: {
@@ -146,11 +137,24 @@ export default {
             }
           }
         }
+      ],
+      summaryColumns: [
+        {
+          title: "Point",
+          key: "point",
+          align: "center"
+        },
+        {
+          title: "Count",
+          key: "count",
+          align: "center"
+        }
       ]
     };
   },
   methods: {
     createSession() {
+      //Validation
       if (this.playerName == "") {
         this.$Message.error({
           content: "Please enter your name.",
@@ -158,12 +162,15 @@ export default {
         });
         return;
       }
+
+      //Emit event
       this.socket.emit("create session", {
         name: this.playerName,
-        sessionId: this.session.id
+        sessionId: this.sessionId
       });
     },
     joinSession() {
+      //Validation
       if (this.playerName == "") {
         this.$Message.error({
           content: "Please enter your name.",
@@ -171,19 +178,22 @@ export default {
         });
         return;
       }
-      if (this.session.id == "") {
+      if (this.sessionId == "") {
         this.$Message.error({
           content: "Please enter session ID.",
           closable: true
         });
         return;
-      }      
+      }
+
+      //Emit event
       this.socket.emit("join session", {
         name: this.playerName,
-        sessionId: this.session.id
+        sessionId: this.sessionId
       });
     },
     vote() {
+      //Validation
       if (!this.session.players) {
         this.$Message.error({
           content: "Please join or create a session.",
@@ -191,10 +201,14 @@ export default {
         });
         return;
       }
+
+      //Update point for current player
       let player = this.session.players.find(player => {
         return player.name == this.playerName;
       });
       player.point = this.point;
+
+      //Emit event
       this.socket.emit("vote", {
         name: this.playerName,
         sessionId: this.session.id,
@@ -213,30 +227,43 @@ export default {
         name: this.playerName,
         sessionId: this.session.id
       });
+    },
+    refreshSession() {
+      this.socket.emit("refresh session", this.session.id);
     }
   },
 
   created() {
     console.log(this.$route.params.id);
 
+    if (this.$route.params.id) {
+      this.sessionId = this.$route.params.id;
+    }
+
     this.socket = io("http://localhost:3000");
 
-    this.socket.on("session created", data => {
-      console.log("session created: " + data);
-      this.session = data;
+    this.socket.on("session created", session => {
+      console.log("session created: " + session);
+      this.session = session;
+      this.sessionId = session.id;
+      this.point = "";
+      this.showVotes = session.showVotes;
       this.sessionJoined = true;
       window.history.pushState(null, "", "/" + this.session.id);
     });
 
-    this.socket.on("session joined", data => {
-      console.log("session joined: " + data);
-      this.session = data;
+    this.socket.on("session joined", session => {
+      console.log("session joined: " + session);
+      this.session = session;
+      this.sessionId = session.id;
+      this.point = "";
+      this.showVotes = session.showVotes;
       this.sessionJoined = true;
     });
 
     this.socket.on("player joined", data => {
       console.log("player joined " + data);
-      this.session.players.push(data);
+      //this.session.players.push(data);
       this.$Notice.open({
         title: data.name + " joined."
       });
@@ -244,23 +271,26 @@ export default {
 
     this.socket.on("player left", data => {
       console.log("player left " + data);
-      this.session.players = this.session.players.filter(
-        player => player.name != data.name
-      );
+      // this.session.players = this.session.players.filter(
+      //   player => player.name != data.name
+      // );
       this.$Notice.open({
         title: data.name + " left."
       });
     });
 
-    this.socket.on("player voted", data => {
-      console.log("player voted: " + data);
-      let player = this.session.players.find(player => {
-        return player.name == data.name;
-      });
-      if (player) {
-        player.point = data.point;
-      }
-    });
+    // this.socket.on("player voted", data => {
+    //   console.log("player voted: " + data);
+    //   // let player = this.session.players.find(player => {
+    //   //   return player.name == data.name;
+    //   // });
+
+    //   // if (player) {
+    //   //   player.point = data.point;
+    //   // }
+
+    //   this.socket.emit("refresh session", this.session.id);
+    // });
 
     this.socket.on("server error", data => {
       this.$Message.error({
@@ -269,22 +299,37 @@ export default {
       });
     });
 
-    this.socket.on("votes cleaned", data => {
-      this.session = data;
-      this.point = "";
-    });
+    // this.socket.on("votes cleaned", session => {
+    //   this.session = session;
+    //   this.point = "";
+    // });
 
-    this.socket.on("votes toggled", data => {
-      this.session = data;
-    });
+    // this.socket.on("votes toggled", session => {
+    //   this.session = session;
+    // });
 
-    this.socket.on("session updated", data => {
-      this.session = data;
-    });
+    this.socket.on("session updated", session => {
+      this.session = session;
+      this.showVotes = session.showVotes;
+      if (session.showVotes) {
+        this.summary = [];
+        this.session.players.forEach(player => {
+          let result = this.summary.find(result => {
+            return result.point == player.point;
+          });
+          if (result) {
+            result.count++;
+          } else {
+            result = { point: player.point, count: 1 };
+            this.summary.push(result);
+          }
+        });
 
-    if (this.$route.params.id) {
-      this.session.id = this.$route.params.id;
-    }
+        this.summary.sort((a, b) => {
+          return parseInt(b.count) - parseInt(a.count);
+        });
+      }
+    });
   }
 };
 </script>
