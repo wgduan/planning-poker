@@ -33,8 +33,8 @@
         <Col span="12" align="left"><h2>Planning Poker</h2> </Col>
         <Col span="12" align="right">
           <div v-if="sessionJoined">
-            <a href="javascript:void()" @click="refreshSession"><Icon type="refresh" size="24"></Icon></a>&nbsp;
-            <a href="javascript:void()" @click="quickSession"><Icon type="android-exit" size="24"></Icon></a>
+            <a href="Javascrpipt:void(0);" @click="refreshSession"><Icon type="refresh" size="24"></Icon></a>&nbsp;
+            <a href="Javascrpipt:void(0);" @click="quickSession"><Icon type="android-exit" size="24"></Icon></a>
           </div>
         </Col>
       </Row>
@@ -246,7 +246,8 @@ export default {
     this.socket = io("http://duanwg.eastasia.cloudapp.azure.com:8080");
 
     this.socket.on("session created", session => {
-      console.log("session created: " + session);
+      console.log("session created: " + JSON.stringify(session));
+      this.session=session;
       this.sessionId = session.id;
       this.point = "";
       this.showVotes = session.showVotes;
@@ -261,6 +262,7 @@ export default {
       this.point = "";
       this.showVotes = session.showVotes;
       this.sessionJoined = true;
+      window.history.pushState(null, "", "/" + this.session.id);
     });
 
     this.socket.on("player joined", data => {

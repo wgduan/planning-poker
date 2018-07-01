@@ -222,6 +222,8 @@ io.on('connection', (socket) => {
                 );
                 socket.broadcast.to(session.id).emit('session updated', session)
             }
+            socket.leave(data.sessionId)
+
         } catch (error) {
             console.error(error)
         }
