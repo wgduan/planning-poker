@@ -111,7 +111,7 @@ io.on('connection', (socket) => {
             }
             socket.emit('session joined', session)
             socket.broadcast.to(session.id).emit('player joined', player)
-            socket.broadcast.to(session.id).emit('session updated', session)
+            io.in(session.id).emit('session updated', session)
             console.log(session);
         } catch (error) {
             console.error(error)

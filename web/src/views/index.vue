@@ -116,7 +116,8 @@ export default {
       columns: [
         {
           title: "Name",
-          key: "name"
+          key: "name",
+          align: "center"
         },
         {
           title: "Point",
@@ -244,7 +245,6 @@ export default {
 
     this.socket.on("session created", session => {
       console.log("session created: " + session);
-      this.session = session;
       this.sessionId = session.id;
       this.point = "";
       this.showVotes = session.showVotes;
