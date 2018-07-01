@@ -6,7 +6,7 @@
   "scripts": {
     "init": "webpack --progress --config webpack.dev.config.js",
     "dev": "webpack-dev-server --content-base ./ --port 8000 --open --inline --hot --history-api-fallback --config webpack.dev.config.js",
-    "build": "webpack --progress --hide-modules --config webpack.prod.config.js"
+    "build": "rimraf dist && webpack --progress --hide-modules --config webpack.prod.config.js"
   },
   "repository": {
     "type": "git",

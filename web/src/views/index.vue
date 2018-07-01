@@ -95,8 +95,13 @@
                   <Table :columns="summaryColumns" :data="summary" size="large" no-data-text="No result"></Table>
           </Col>
       </Row>
-
-        
+      <br/>
+      <hr/>
+      <Row>
+        <Col span="24" align="center">
+          <a href="https://github.com/wgduan/planning-poker" ><Icon type="social-github" size="24" color="gray"></Icon></a>
+        </Col>
+      </Row>
     </div>
 </template>
 <script>
@@ -117,7 +122,10 @@ export default {
         {
           title: "Name",
           key: "name",
-          align: "center"
+          align: "center",
+          render:(h, params)=>{
+              return h((params.row.name == this.playerName)?'strong':'span',params.row.name)
+          },
         },
         {
           title: "Point",
