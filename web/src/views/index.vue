@@ -1,19 +1,4 @@
 <style scoped lang="less">
-// .index {
-//   width: 100%;
-//   position: absolute;
-//   top: 0;
-//   bottom: 0;
-//   left: 0;
-//   text-align: center;
-//   .ivu-row-flex {
-//     height: 100%;
-//   }
-//   .ivu-col-flex {
-//     color: red;
-//     padding: 3px;
-//   }
-// }
 .index {
   max-width: 400px;
 }
@@ -124,9 +109,12 @@ export default {
           title: "Name",
           key: "name",
           align: "center",
-          render:(h, params)=>{
-              return h((params.row.name == this.playerName)?'strong':'span',params.row.name)
-          },
+          render: (h, params) => {
+            return h(
+              params.row.name == this.playerName ? "strong" : "span",
+              params.row.name
+            );
+          }
         },
         {
           title: "Point",
@@ -256,7 +244,7 @@ export default {
 
     this.socket.on("session created", session => {
       console.log("session created: " + JSON.stringify(session));
-      this.session=session;
+      this.session = session;
       this.sessionId = session.id;
       this.point = "";
       this.showVotes = session.showVotes;
