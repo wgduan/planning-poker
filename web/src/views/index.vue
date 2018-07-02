@@ -18,8 +18,8 @@
         <Col span="12" align="left"><h2>Planning Poker</h2> </Col>
         <Col span="12" align="right">
           <div v-if="sessionJoined">
-            <a href="Javascrpipt:void(0);" @click="refreshSession" title="Refresh"><Icon type="refresh" size="24"></Icon></a>&nbsp;&nbsp;&nbsp;
-            <a href="Javascrpipt:void(0);" @click="quickSession" title="Quit"><Icon type="android-exit" size="24"></Icon></a>
+            <a href="Javascript:void(0);" @click="refreshSession" title="Refresh"><Icon type="refresh" size="24"></Icon></a>&nbsp;&nbsp;&nbsp;
+            <a href="Javascript:void(0);" @click="quickSession" title="Quit"><Icon type="android-exit" size="24"></Icon></a>
           </div>
         </Col>
       </Row>

@@ -3,13 +3,18 @@ import iView from 'iview';
 import locale from 'iview/dist/locale/en-US';
 import 'promise-polyfill/src/polyfill';
 import VueRouter from 'vue-router';
+import "ie-array-filter-polyfill";
+import "ie-array-find-polyfill";
+import './libs/array-polyfill'
 
 import Routers from './router';
 import App from './app.vue';
 import 'iview/dist/styles/iview.css';
 
 Vue.use(VueRouter);
-Vue.use(iView,{ locale });
+Vue.use(iView, {
+    locale
+});
 
 // 路由配置
 const RouterConfig = {
