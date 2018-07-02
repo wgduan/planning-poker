@@ -62,11 +62,11 @@
           </Col>
       </Row>
       <Row :gutter="5"  v-if="sessionJoined">
-          <Col span="12" >
-                  <i-button type="primary" size="large" style="width:100%"  @click="toggleVotes">{{(this.session.showVotes)?'Hide':'Show'}} Votes</i-button>
+          <Col span="12"  align="left">
+                  <i-button type="primary" size="large" style="width:95%"  @click="toggleVotes">{{(this.session.showVotes)?'Hide':'Show'}} Votes</i-button>
           </Col>
-          <Col span="12" >
-                  <i-button type="primary" size="large" style="width:100%"  @click="cleanVotes">Clean Votes</i-button>
+          <Col span="12"  align="right">
+                  <i-button type="primary" size="large" style="width:95%"  @click="cleanVotes">Clean Votes</i-button>
 
           </Col>
       </Row>                
