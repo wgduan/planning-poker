@@ -34,11 +34,11 @@
           </Col>
       </Row>
       <Row :gutter="5" v-if="!sessionJoined">
-          <Col span="12" >
-                  <i-button type="primary" size="large" style="width:100%"  @click="joinSession">Join</i-button>
+          <Col span="12" align="left">
+                  <i-button type="primary" size="large" style="width:95%"  @click="joinSession">Join</i-button>
           </Col>
-          <Col span="12" >
-                  <i-button type="primary" size="large" style="width:100%"  @click="createSession">Create new session</i-button>
+          <Col span="12"  align="right">
+                  <i-button type="primary" size="large" style="width:95%"  @click="createSession">Create new session</i-button>
           </Col>
       </Row>
       <Row v-if="sessionJoined">
