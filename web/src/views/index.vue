@@ -238,9 +238,7 @@ export default {
       this.sessionId = this.$route.params.id;
     }
 
-    //this.socket = io("http://localhost:3000");
-    //this.socket = io("http://localhost:8080");
-    this.socket = io("http://duanwg.eastasia.cloudapp.azure.com:8080");
+    this.socket = io("http://localhost:8080");
 
     this.socket.on("session created", session => {
       console.log("session created: " + JSON.stringify(session));
@@ -282,15 +280,14 @@ export default {
 
     // this.socket.on("player voted", data => {
     //   console.log("player voted: " + data);
-    //   // let player = this.session.players.find(player => {
-    //   //   return player.name == data.name;
-    //   // });
+    //   let player = this.session.players.find(player => {
+    //     return player.name == data.name;
+    //   });
 
-    //   // if (player) {
-    //   //   player.point = data.point;
-    //   // }
+    //   if (player) {
+    //     player.point = data.point;
+    //   }
 
-    //   this.socket.emit("refresh session", this.session.id);
     // });
 
     this.socket.on("server error", data => {
@@ -300,10 +297,9 @@ export default {
       });
     });
 
-    // this.socket.on("votes cleaned", session => {
-    //   this.session = session;
-    //   this.point = "";
-    // });
+    this.socket.on("votes cleaned", session => {
+      this.point = "";
+    });
 
     // this.socket.on("votes toggled", session => {
     //   this.session = session;
