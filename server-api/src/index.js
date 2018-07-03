@@ -166,7 +166,7 @@ io.on('connection', (socket) => {
                 player.point = '';
             });
 
-            //io.in(session.id).emit('votes cleaned', session)
+            io.in(session.id).emit('votes cleaned', session)
             io.in(session.id).emit('session updated', session)
         } catch (error) {
             console.error(error)

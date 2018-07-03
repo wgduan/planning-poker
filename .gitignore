@@ -62,3 +62,4 @@ typings/
 
 # out put folders
 dist/
+web/index_prod.html

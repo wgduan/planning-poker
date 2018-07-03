@@ -62,10 +62,10 @@
           </Col>
       </Row>
       <Row :gutter="5"  v-if="sessionJoined">
-          <Col span="12"  align="left">
+          <Col span="12" align="left">
                   <i-button type="primary" size="large" style="width:95%"  @click="toggleVotes">{{(this.session.showVotes)?'Hide':'Show'}} Votes</i-button>
           </Col>
-          <Col span="12"  align="right">
+          <Col span="12" align="right">
                   <i-button type="primary" size="large" style="width:95%"  @click="cleanVotes">Clean Votes</i-button>
 
           </Col>
@@ -238,9 +238,7 @@ export default {
       this.sessionId = this.$route.params.id;
     }
 
-    //this.socket = io("http://localhost:3000");
-    //this.socket = io("http://localhost:8080");
-    this.socket = io("http://duanwg.eastasia.cloudapp.azure.com:8080");
+    this.socket = io("http://localhost:8080");
 
     this.socket.on("session created", session => {
       console.log("session created: " + JSON.stringify(session));
@@ -282,15 +280,14 @@ export default {
 
     // this.socket.on("player voted", data => {
     //   console.log("player voted: " + data);
-    //   // let player = this.session.players.find(player => {
-    //   //   return player.name == data.name;
-    //   // });
+    //   let player = this.session.players.find(player => {
+    //     return player.name == data.name;
+    //   });
 
-    //   // if (player) {
-    //   //   player.point = data.point;
-    //   // }
+    //   if (player) {
+    //     player.point = data.point;
+    //   }
 
-    //   this.socket.emit("refresh session", this.session.id);
     // });
 
     this.socket.on("server error", data => {
@@ -300,10 +297,9 @@ export default {
       });
     });
 
-    // this.socket.on("votes cleaned", session => {
-    //   this.session = session;
-    //   this.point = "";
-    // });
+    this.socket.on("votes cleaned", session => {
+      this.point = "";
+    });
 
     // this.socket.on("votes toggled", session => {
     //   this.session = session;
