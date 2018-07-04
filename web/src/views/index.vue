@@ -92,12 +92,15 @@
 </template>
 <script>
 import io from "socket.io-client";
+//import uuid from 'uuid/v1'
+var uuidv1 = require("uuid/v1");
 
 export default {
   data() {
     return {
       socket: {},
       playerName: "",
+      playerId: "",
       point: "",
       sessionJoined: false,
       sessionId: "",
@@ -112,6 +115,9 @@ export default {
           render: (h, params) => {
             return h(
               params.row.name == this.playerName ? "strong" : "span",
+              {
+                style: params.row.status == "disconnected" ? "color:silver" : ""
+              },
               params.row.name
             );
           }
@@ -164,6 +170,7 @@ export default {
       //Emit event
       this.socket.emit("create session", {
         name: this.playerName,
+        playerId: this.playerId,
         sessionId: this.sessionId
       });
     },
@@ -187,6 +194,7 @@ export default {
       //Emit event
       this.socket.emit("join session", {
         name: this.playerName,
+        playerId: this.playerId,
         sessionId: this.sessionId
       });
     },
@@ -209,6 +217,7 @@ export default {
       //Emit event
       this.socket.emit("vote", {
         name: this.playerName,
+        playerId: this.playerId,
         sessionId: this.session.id,
         point: this.point
       });
@@ -223,6 +232,7 @@ export default {
       this.sessionJoined = false;
       this.socket.emit("quit session", {
         name: this.playerName,
+        playerId: this.playerId,
         sessionId: this.session.id
       });
     },
@@ -233,6 +243,13 @@ export default {
 
   created() {
     console.log(this.$route.params.id);
+    console.log(this.playerId);
+    this.playerId = window.localStorage.getItem("playerId");
+    if (this.playerId == null) {
+      this.playerId = uuidv1();
+      window.localStorage.setItem("playerId", this.playerId);
+    }
+    console.log(this.playerId);
 
     if (this.$route.params.id) {
       this.sessionId = this.$route.params.id;
@@ -247,6 +264,7 @@ export default {
       this.point = "";
       this.showVotes = session.showVotes;
       this.sessionJoined = true;
+
       window.history.pushState(null, "", "/" + this.session.id);
     });
 
@@ -304,6 +322,8 @@ export default {
     // this.socket.on("votes toggled", session => {
     //   this.session = session;
     // });
+
+    // this.socket.on("player disconnected", data => {});
 
     this.socket.on("session updated", session => {
       this.session = session;

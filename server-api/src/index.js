@@ -39,7 +39,7 @@ io.on('connection', (socket) => {
 
     socket.on('create session', (data) => {
         try {
-            //data: {name:'name',sessionId:''}
+            //data: {name:'name',playerId:'',sessionId:''}
             console.log(data);
             console.log(socket.id)
             let sessionId = (data.sessionId == '') ? uuidv1() : data.sessionId;
@@ -56,6 +56,7 @@ io.on('connection', (socket) => {
             socket.join(sessionId)
             socket.playerName = data.name;
             socket.sessionId = sessionId
+            socket.playerId = data.playerId
 
 
             session = {
@@ -65,7 +66,8 @@ io.on('connection', (socket) => {
                     name: data.name,
                     role: 'host',
                     point: '',
-                    id: socket.id,
+                    status: 'connected',
+                    id: (data.playerId == "") ? uuidv1() : data.playerId,
                 }]
             };
             sessions.push(session);
@@ -77,7 +79,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('join session', (data) => {
-        //data: {name:'name',sessionId:'1'}
+        //data: {name:'name',playerId:'',sessionId:'1'}
         try {
             console.log(data);
             console.log(socket.id)
@@ -90,15 +92,16 @@ io.on('connection', (socket) => {
                 return;
             }
             let player = session.players.find(player => {
-                return player.name == data.name
+                return player.id == data.playerId
             })
-            if (player && player.id != socket.id) {
-                socket.emit('server error', "Name '" + data.name + "' is already used.");
-                return;
-            }
+            // if (player && player.id != socket.id) {
+            //     socket.emit('server error', "Name '" + data.name + "' is already used.");
+            //     return;
+            // }
 
             socket.join(data.sessionId)
             socket.playerName = data.name
+            socket.playerId = data.playerId
             socket.sessionId = data.sessionId
 
             if (!player) {
@@ -106,10 +109,12 @@ io.on('connection', (socket) => {
                     name: data.name,
                     role: 'player',
                     point: '',
-                    id: socket.id,
+                    id: data.playerId,
                 }
                 session.players.push(player)
             }
+            player.name = data.name
+            player.status = 'connected'
             socket.emit('session joined', session)
             socket.broadcast.to(session.id).emit('player joined', player)
             io.in(session.id).emit('session updated', session)
@@ -125,7 +130,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('vote', (data) => {
-        //data: {name:'name',sessionId:'1', point:'2'}
+        //data: {name:'name',playerId:'',sessionId:'1', point:'2'}
         try {
             console.log(data);
 
@@ -138,7 +143,7 @@ io.on('connection', (socket) => {
             }
 
             let player = session.players.find((player) => {
-                return player.name == data.name
+                return player.id == data.playerId
             })
             if (player) {
                 player.point = data.point;
@@ -208,7 +213,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('quit session', data => {
-        //data: {name:'',sessionId:''}
+        //data: {name:'',playerId:'',sessionId:''}
         try {
             let session = sessions.find((session) => {
                 return session.id == data.sessionId
@@ -218,7 +223,7 @@ io.on('connection', (socket) => {
             });
             if (session) {
                 session.players = session.players.filter(
-                    player => player.name != data.name
+                    player => player.id != data.playerId
                 );
                 socket.broadcast.to(session.id).emit('session updated', session)
             }
@@ -231,19 +236,26 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         try {
+            console.log(socket.playerName + " disconnected.")
             let session = sessions.find((session) => {
                 return session.id == socket.sessionId
             });
             // echo globally that this client has left
-            socket.broadcast.to(socket.sessionId).emit('player left', {
-                name: socket.playerName,
-            });
             if (session) {
-                session.players = session.players.filter(
-                    player => player.name != socket.playerName
-                );
+                // session.players = session.players.filter(
+                //     player => player.name != socket.playerName
+                // );
+                let player = session.players.find(player => {
+                    return player.id == socket.playerId
+                })
+                if (player) {
+                    player.status = 'disconnected';
+                }
                 socket.broadcast.to(session.id).emit('session updated', session)
             }
+            // socket.broadcast.to(socket.sessionId).emit('player disconnected', {
+            //     name: socket.playerName,
+            // });
         } catch (error) {
             console.error(error)
         }
