@@ -92,7 +92,6 @@
 </template>
 <script>
 import io from "socket.io-client";
-//import uuid from 'uuid/v1'
 var uuidv1 = require("uuid/v1");
 
 export default {
@@ -223,10 +222,16 @@ export default {
       });
     },
     toggleVotes() {
-      this.socket.emit("toggle votes", this.session.id);
+      this.socket.emit("toggle votes", {
+        playerId: this.playerId,
+        sessionId: this.sessionId
+      });
     },
     cleanVotes() {
-      this.socket.emit("clean votes", this.session.id);
+      this.socket.emit("clean votes", {
+        playerId: this.playerId,
+        sessionId: this.sessionId
+      });
     },
     quickSession() {
       this.sessionJoined = false;
@@ -237,13 +242,17 @@ export default {
       });
     },
     refreshSession() {
-      this.socket.emit("refresh session", this.session.id);
+      this.socket.emit("refresh session", {
+        playerId: this.playerId,
+        sessionId: this.sessionId
+      });
     }
   },
 
   created() {
     console.log(this.$route.params.id);
     console.log(this.playerId);
+
     this.playerId = window.localStorage.getItem("playerId");
     if (this.playerId == null) {
       this.playerId = uuidv1();
@@ -325,6 +334,17 @@ export default {
 
     // this.socket.on("player disconnected", data => {});
 
+    this.socket.on("connect",()=>{
+      this.socket.emit("player connect",{
+        name:this.playerName,
+        playerId: this.playerId,
+        sessionId: this.sessionId
+      });
+    });
+
+    // this.socket.on('player connected',player=>{
+      
+    // })
     this.socket.on("session updated", session => {
       this.session = session;
       this.showVotes = session.showVotes;
