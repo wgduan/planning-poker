@@ -264,7 +264,7 @@ export default {
       this.sessionId = this.$route.params.id;
     }
 
-    this.socket = io("http://localhost:8080");
+    this.socket = io("https://localhost:8080");
 
     this.socket.on("session created", session => {
       console.log("session created: " + JSON.stringify(session));

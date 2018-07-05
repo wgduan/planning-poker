@@ -1,13 +1,30 @@
 // Setup basic express server
+// var express = require('express');
+// var app = express();
+// var path = require('path');
+// var server = require('http').createServer(app);
+// var io = require('socket.io')(server);
+// var port = process.env.PORT || 8080;
+// var uuidv1 = require('uuid/v1');
+// server.listen(port, () => {
+//     console.log('Server listening at port %d', port);
+// });
+
+
+
+
 var express = require('express');
 var app = express();
+var fs = require('fs');
+var https = require('https');
 var path = require('path');
-var server = require('http').createServer(app);
+var privateKey  = fs.readFileSync(path.join(__dirname, '../cert/privkey.pem'), 'utf8');
+var certificate = fs.readFileSync(path.join(__dirname, '../cert/fullchain.pem'), 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+var server = https.createServer(credentials, app);
+var port = 8080;
 var io = require('socket.io')(server);
-var port = process.env.PORT || 8080;
 var uuidv1 = require('uuid/v1');
-
-
 server.listen(port, () => {
     console.log('Server listening at port %d', port);
 });
