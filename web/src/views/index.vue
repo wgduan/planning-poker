@@ -18,6 +18,16 @@
         <Col span="12" align="left"><h2>Planning Poker</h2> </Col>
         <Col span="12" align="right">
           <div v-if="sessionJoined">
+            <!-- <a href="Javascript:void(0);" @click="refreshSession" title="Refresh"><Icon type="person" size="24"></Icon></a>&nbsp;&nbsp;&nbsp; -->
+    <Dropdown trigger="click" @on-click="changeRole">
+        <a href="javascript:void(0)">
+            <Icon type="person" size="24"></Icon>
+        </a>
+        <DropdownMenu slot="list" style="text-align:center;">
+            <DropdownItem name="host" :selected="role=='host'">Host</DropdownItem>
+            <DropdownItem name="player" :selected="role=='player'">Player</DropdownItem>
+        </DropdownMenu>&nbsp;&nbsp;&nbsp;
+    </Dropdown>            
             <a href="Javascript:void(0);" @click="refreshSession" title="Refresh"><Icon type="refresh" size="24"></Icon></a>&nbsp;&nbsp;&nbsp;
             <a href="Javascript:void(0);" @click="quickSession" title="Quit"><Icon type="android-exit" size="24"></Icon></a>
           </div>
@@ -61,7 +71,7 @@
 
           </Col>
       </Row>
-      <Row :gutter="5"  v-if="sessionJoined">
+      <Row :gutter="5"  v-if="sessionJoined && this.role=='host'">
           <Col span="12" align="left">
                   <i-button type="primary" size="large" style="width:95%"  @click="toggleVotes">{{(this.session.showVotes)?'Hide':'Show'}} Votes</i-button>
           </Col>
@@ -100,6 +110,7 @@ export default {
       socket: {},
       playerName: "",
       playerId: "",
+      role:"host",
       point: "",
       sessionJoined: false,
       sessionId: "",
@@ -166,10 +177,12 @@ export default {
         return;
       }
 
+      this.role='host'
       //Emit event
       this.socket.emit("create session", {
         name: this.playerName,
         playerId: this.playerId,
+        role:this.role,
         sessionId: this.sessionId
       });
     },
@@ -189,13 +202,17 @@ export default {
         });
         return;
       }
-
+      this.role='player'
       //Emit event
       this.socket.emit("join session", {
         name: this.playerName,
         playerId: this.playerId,
+        role:this.role,
         sessionId: this.sessionId
       });
+    },
+    changeRole(role){
+      this.role=role;
     },
     vote() {
       //Validation
@@ -264,7 +281,7 @@ export default {
       this.sessionId = this.$route.params.id;
     }
 
-    this.socket = io("https://localhost:8080");
+    this.socket = io("http://localhost:8080");
 
     this.socket.on("session created", session => {
       console.log("session created: " + JSON.stringify(session));

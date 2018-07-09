@@ -1,4 +1,5 @@
-// Setup basic express server
+//Setup basic express server
+
 // var express = require('express');
 // var app = express();
 // var path = require('path');
@@ -56,7 +57,7 @@ io.on('connection', (socket) => {
 
     socket.on('create session', (data) => {
         try {
-            //data: {name:'name',playerId:'',sessionId:''}
+            //data: {name:'name',playerId:'',role='',sessionId:''}
             console.log('create session:'+JSON.stringify(data));
             let sessionId = (data.sessionId == '') ? uuidv1() : data.sessionId;
 
@@ -80,7 +81,7 @@ io.on('connection', (socket) => {
                 showVotes: false,
                 players: [{
                     name: data.name,
-                    role: 'host',
+                    role: (data.role)?data.role:'host',
                     point: '',
                     status: 'connected',
                     id: (data.playerId == "") ? uuidv1() : data.playerId,
@@ -95,7 +96,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('join session', (data) => {
-        //data: {name:'name',playerId:'',sessionId:'1'}
+        //data: {name:'name',playerId:'',role='',sessionId:'1'}
         try {
             console.log('join session:'+JSON.stringify(data));
 
@@ -117,7 +118,6 @@ io.on('connection', (socket) => {
 
             if (!player) {
                 player = {
-                    role: 'player',
                     point: '',
                     id: data.playerId,
                 }
@@ -125,6 +125,7 @@ io.on('connection', (socket) => {
             }
             player.name = data.name
             player.status = 'connected'
+            player.role=(data.role)?data.role:'player'
             socket.emit('session joined', session)
             socket.broadcast.to(session.id).emit('player joined', player)
             socket.broadcast.to(session.id).emit('session updated', session)
@@ -135,7 +136,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('change role', (data) => {
-        //data: {name:'name',role:'host|player|observer'}
+        //data: {playerId:'',name:'name',role:'host|player|observer'}
         console.log('change role:'+JSON.stringify(data));
     });
 
