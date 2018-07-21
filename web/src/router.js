@@ -7,7 +7,7 @@ const routers = [{
         component: (resolve) => require(['./views/index.vue'], resolve)
     },
     {
-        name: 'home',
+        name: 'session',
         path: '/:id',
         meta: {
             title: 'Home'

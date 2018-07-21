@@ -64,3 +64,4 @@ typings/
 dist/
 web/index_prod.html
 cert/
+web/src/config/config.prod.js

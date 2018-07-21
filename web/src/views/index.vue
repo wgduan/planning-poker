@@ -80,16 +80,21 @@
 
           </Col>
       </Row>                
-      <Row  v-if="sessionJoined">
-          <Col span="24" align="center">
-                  <Table :columns="columns" :data="session.players" size="large" no-data-text="No player"></Table>
-          </Col>
-      </Row>
       <Row  v-if="sessionJoined&&showVotes">
           <Col span="24" align="center">
-                  <Table :columns="summaryColumns" :data="summary" size="large" no-data-text="No result"></Table>
+                  <Table :columns="summaryColumns" :data="summary" size="large" no-data-text="No result">
+                    <b slot="header">Summary</b>
+                  </Table>
           </Col>
       </Row>
+      <Row  v-if="sessionJoined">
+          <Col span="24" align="center">
+                  <Table :columns="columns" :data="session.players" size="large" no-data-text="No player">
+                    <b slot="header">Votes</b>
+                  </Table>
+          </Col>
+      </Row>
+
       <br/>
       <hr/>
       <br/>
@@ -102,6 +107,7 @@
 </template>
 <script>
 import io from "socket.io-client";
+import AppConfig from '../config/config.js'
 var uuidv1 = require("uuid/v1");
 
 export default {
@@ -281,7 +287,7 @@ export default {
       this.sessionId = this.$route.params.id;
     }
 
-    this.socket = io("http://localhost:8080");
+    this.socket = io(AppConfig.socketIOUrl);
 
     this.socket.on("session created", session => {
       console.log("session created: " + JSON.stringify(session));

@@ -8,7 +8,9 @@ module.exports = {
         vendors: './src/vendors'
     },
     output: {
-        path: path.join(__dirname, './dist')
+        path: path.join(__dirname, './dist'),
+        filename: '[name].[chunkHash].js',
+        chunkFilename: '[name].[chunkHash].chunk.js'        
     },
     module: {
         rules: [{
