@@ -113,7 +113,7 @@ var uuidv1 = require("uuid/v1");
 export default {
   data() {
     return {
-      socket: {},
+      socket: null,
       playerName: "",
       playerId: "",
       role:"host",
@@ -174,6 +174,10 @@ export default {
   },
   methods: {
     createSession() {
+      if(!this.socket)
+      {
+        this.initSocket();
+      }
       //Validation
       if (this.playerName == "") {
         this.$Message.error({
@@ -193,7 +197,10 @@ export default {
       });
     },
     joinSession() {
-      //Validation
+      if(!this.socket)
+      {
+        this.initSocket();
+      }      //Validation
       if (this.playerName == "") {
         this.$Message.error({
           content: "Please enter your name.",
@@ -269,7 +276,113 @@ export default {
         playerId: this.playerId,
         sessionId: this.sessionId
       });
+    },
+    initSocket(){
+      this.socket = io(AppConfig.socketIOUrl);
+
+      this.socket.on("session created", session => {
+        console.log("session created: " + JSON.stringify(session));
+        this.session = session;
+        this.sessionId = session.id;
+        this.point = "";
+        this.showVotes = session.showVotes;
+        this.sessionJoined = true;
+
+        window.history.pushState(null, "", "/" + this.session.id);
+      });
+
+      this.socket.on("session joined", session => {
+        console.log("session joined: " + session);
+        this.session = session;
+        this.sessionId = session.id;
+        this.point = "";
+        this.showVotes = session.showVotes;
+        this.sessionJoined = true;
+        window.history.pushState(null, "", "/" + this.session.id);
+      });
+
+      this.socket.on("player joined", data => {
+        console.log("player joined " + data);
+        //this.session.players.push(data);
+        this.$Notice.open({
+          title: data.name + " joined."
+        });
+      });
+
+      this.socket.on("player left", data => {
+        console.log("player left " + data);
+        // this.session.players = this.session.players.filter(
+        //   player => player.name != data.name
+        // );
+        this.$Notice.open({
+          title: data.name + " left."
+        });
+      });
+
+      // this.socket.on("player voted", data => {
+      //   console.log("player voted: " + data);
+      //   let player = this.session.players.find(player => {
+      //     return player.name == data.name;
+      //   });
+
+      //   if (player) {
+      //     player.point = data.point;
+      //   }
+
+      // });
+
+      this.socket.on("server error", data => {
+        this.$Message.error({
+          content: data,
+          closable: true
+        });
+      });
+
+      this.socket.on("votes cleaned", session => {
+        this.point = "";
+      });
+
+      // this.socket.on("votes toggled", session => {
+      //   this.session = session;
+      // });
+
+      // this.socket.on("player disconnected", data => {});
+
+      this.socket.on("connect",()=>{
+        this.socket.emit("player connect",{
+          name:this.playerName,
+          playerId: this.playerId,
+          sessionId: this.sessionId
+        });
+      });
+
+      // this.socket.on('player connected',player=>{
+        
+      // })
+      this.socket.on("session updated", session => {
+        this.session = session;
+        this.showVotes = session.showVotes;
+        if (session.showVotes) {
+          this.summary = [];
+          this.session.players.forEach(player => {
+            let result = this.summary.find(result => {
+              return result.point == player.point;
+            });
+            if (result) {
+              result.count++;
+            } else {
+              result = { point: player.point, count: 1 };
+              this.summary.push(result);
+            }
+          });
+
+          this.summary.sort((a, b) => {
+            return parseInt(b.count) - parseInt(a.count);
+          });
+        }
+      });    
     }
+
   },
 
   created() {
@@ -287,109 +400,7 @@ export default {
       this.sessionId = this.$route.params.id;
     }
 
-    this.socket = io(AppConfig.socketIOUrl);
 
-    this.socket.on("session created", session => {
-      console.log("session created: " + JSON.stringify(session));
-      this.session = session;
-      this.sessionId = session.id;
-      this.point = "";
-      this.showVotes = session.showVotes;
-      this.sessionJoined = true;
-
-      window.history.pushState(null, "", "/" + this.session.id);
-    });
-
-    this.socket.on("session joined", session => {
-      console.log("session joined: " + session);
-      this.session = session;
-      this.sessionId = session.id;
-      this.point = "";
-      this.showVotes = session.showVotes;
-      this.sessionJoined = true;
-      window.history.pushState(null, "", "/" + this.session.id);
-    });
-
-    this.socket.on("player joined", data => {
-      console.log("player joined " + data);
-      //this.session.players.push(data);
-      this.$Notice.open({
-        title: data.name + " joined."
-      });
-    });
-
-    this.socket.on("player left", data => {
-      console.log("player left " + data);
-      // this.session.players = this.session.players.filter(
-      //   player => player.name != data.name
-      // );
-      this.$Notice.open({
-        title: data.name + " left."
-      });
-    });
-
-    // this.socket.on("player voted", data => {
-    //   console.log("player voted: " + data);
-    //   let player = this.session.players.find(player => {
-    //     return player.name == data.name;
-    //   });
-
-    //   if (player) {
-    //     player.point = data.point;
-    //   }
-
-    // });
-
-    this.socket.on("server error", data => {
-      this.$Message.error({
-        content: data,
-        closable: true
-      });
-    });
-
-    this.socket.on("votes cleaned", session => {
-      this.point = "";
-    });
-
-    // this.socket.on("votes toggled", session => {
-    //   this.session = session;
-    // });
-
-    // this.socket.on("player disconnected", data => {});
-
-    this.socket.on("connect",()=>{
-      this.socket.emit("player connect",{
-        name:this.playerName,
-        playerId: this.playerId,
-        sessionId: this.sessionId
-      });
-    });
-
-    // this.socket.on('player connected',player=>{
-      
-    // })
-    this.socket.on("session updated", session => {
-      this.session = session;
-      this.showVotes = session.showVotes;
-      if (session.showVotes) {
-        this.summary = [];
-        this.session.players.forEach(player => {
-          let result = this.summary.find(result => {
-            return result.point == player.point;
-          });
-          if (result) {
-            result.count++;
-          } else {
-            result = { point: player.point, count: 1 };
-            this.summary.push(result);
-          }
-        });
-
-        this.summary.sort((a, b) => {
-          return parseInt(b.count) - parseInt(a.count);
-        });
-      }
-    });
   }
 };
 </script>

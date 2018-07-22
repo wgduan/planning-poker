@@ -14,12 +14,6 @@ const routers = [{
         },
         component: (resolve) => require(['./views/index.vue'], resolve)
     },
-    {
-        path: '/session/:id',
-        meta: {
-            title: 'Session'
-        },
-        component: (resolve) => require(['./views/session.vue'], resolve)
-    },
+
 ];
 export default routers;
