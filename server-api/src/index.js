@@ -95,6 +95,7 @@ io.on('connection', (socket) => {
                     role: (data.role)?data.role:'host',
                     point: '',
                     status: 'connected',
+                    sessionJoined:true,
                     id: (data.playerId == "") ? uuidv1() : data.playerId,
                 }]
             };
@@ -136,6 +137,7 @@ io.on('connection', (socket) => {
             }
             player.name = data.name
             player.status = 'connected'
+            sessionJoined=true
             player.role=(data.role)?data.role:'player'
             socket.emit('session joined', session)
             socket.broadcast.to(session.id).emit('player joined', player)
@@ -252,6 +254,31 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('reset session', data => {
+        //data: {playerId:'',sessionId:'1'}
+        try {
+            console.log('reset session:'+JSON.stringify(data));
+            socket.sessionId = data.sessionId
+            socket.playerId = data.playerId
+
+            let session = sessions.find((session) => {
+                return session.id == data.sessionId
+            });
+            if (!session) {
+                socket.emit('server error', "Session does not exist.");
+                return;
+            }
+
+            session.showVotes = false;
+            session.players=[];
+
+
+            socket.emit('session reseted', session);
+        } catch (error) {
+            console.error(error)
+        }
+    });
+
     socket.on('quit session', data => {
         //data: {name:'',playerId:'',sessionId:''}
         try {
@@ -275,6 +302,7 @@ io.on('connection', (socket) => {
             console.error(error)
         }
     });
+
 
     socket.on('player connect',data=>{
         try {

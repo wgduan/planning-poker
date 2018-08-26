@@ -19,17 +19,28 @@
         <Col span="12" align="right">
           <div v-if="sessionJoined">
             <!-- <a href="Javascript:void(0);" @click="refreshSession" title="Refresh"><Icon type="person" size="24"></Icon></a>&nbsp;&nbsp;&nbsp; -->
-    <Dropdown trigger="click" @on-click="changeRole">
-        <a href="javascript:void(0)">
-            <Icon type="person" size="24"></Icon>
-        </a>
-        <DropdownMenu slot="list" style="text-align:center;">
-            <DropdownItem name="host" :selected="role=='host'">Host</DropdownItem>
-            <DropdownItem name="player" :selected="role=='player'">Player</DropdownItem>
-        </DropdownMenu>&nbsp;&nbsp;&nbsp;
-    </Dropdown>            
-            <a href="Javascript:void(0);" @click="refreshSession" title="Refresh"><Icon type="refresh" size="24"></Icon></a>&nbsp;&nbsp;&nbsp;
-            <a href="Javascript:void(0);" @click="quickSession" title="Quit"><Icon type="android-exit" size="24"></Icon></a>
+            <Dropdown trigger="click" @on-click="changeRole">
+                <a href="javascript:void(0)">
+                    <Icon type="person" size="24"></Icon>
+                </a>
+                <DropdownMenu slot="list" style="text-align:center;">
+                    <DropdownItem name="host" :selected="role=='host'">Host</DropdownItem>
+                    <DropdownItem name="player" :selected="role=='player'">Player</DropdownItem>
+                </DropdownMenu>&nbsp;&nbsp;&nbsp;
+            </Dropdown>            
+            <Dropdown trigger="click" @on-click="menuClicked">
+                <a href="javascript:void(0)">
+                    <Icon type="navicon-round" size="24"></Icon>
+                </a>
+                <DropdownMenu slot="list" style="text-align:center;">
+                    <DropdownItem name="refresh" >Refresh</DropdownItem>
+                    <DropdownItem v-if="this.role=='host'"  name="reset" >Reset</DropdownItem>
+                    <DropdownItem name="exit" >Exit</DropdownItem>
+                </DropdownMenu>&nbsp;&nbsp;&nbsp;
+            </Dropdown>  
+            <Modal v-model="showResetModal" @on-ok="resetSession" title="Warning">
+                <p><h3>Reset session will drop everyone in this session, continue to reset session?</h3></p>
+            </Modal>              
           </div>
         </Col>
       </Row>
@@ -123,6 +134,7 @@ export default {
       showVotes: false,
       session: { id: "", showVotes: false },
       summary: [],
+      showResetModal:false,
       columns: [
         {
           title: "Name",
@@ -227,6 +239,23 @@ export default {
     changeRole(role){
       this.role=role;
     },
+    menuClicked(menu){
+      switch (menu) {
+        case 'refresh':
+            this.refreshSession();
+          break;
+        case 'reset':
+
+            this.showResetModal=true;
+          break;
+        case 'exit':
+            this.quitSession();
+          break;
+      
+        default:
+          break;
+      }
+    },
     vote() {
       //Validation
       if (!this.session.players) {
@@ -263,7 +292,7 @@ export default {
         sessionId: this.sessionId
       });
     },
-    quickSession() {
+    quitSession() {
       this.sessionJoined = false;
       this.socket.emit("quit session", {
         name: this.playerName,
@@ -277,6 +306,12 @@ export default {
         sessionId: this.sessionId
       });
     },
+    resetSession() {
+      this.socket.emit("reset session", {
+        playerId: this.playerId,
+        sessionId: this.sessionId
+      });
+    },    
     initSocket(){
       this.socket = io(AppConfig.socketIOUrl);
 
@@ -342,6 +377,9 @@ export default {
         this.point = "";
       });
 
+      this.socket.on("session reseted", session => {
+        this.sessionJoined=false;
+      });
       // this.socket.on("votes toggled", session => {
       //   this.session = session;
       // });
