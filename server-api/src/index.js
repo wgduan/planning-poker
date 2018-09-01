@@ -92,7 +92,7 @@ io.on('connection', (socket) => {
                 showVotes: false,
                 players: [{
                     name: data.name,
-                    role: (data.role)?data.role:'host',
+                    role: data.role,
                     point: '',
                     status: 'connected',
                     sessionJoined:true,
@@ -149,8 +149,31 @@ io.on('connection', (socket) => {
     });
 
     socket.on('change role', (data) => {
-        //data: {playerId:'',name:'name',role:'host|player|observer'}
-        console.log('change role:'+JSON.stringify(data));
+        //data: {sessionId:'1',playerId:'1',name:'name',role:'host|player|observer'}
+        try {
+            console.log('vote:'+JSON.stringify(data));
+            socket.playerName = data.name;
+            socket.sessionId = data.sessionId
+            socket.playerId = data.playerId
+
+            let session = sessions.find((session) => {
+                return session.id == data.sessionId
+            });
+            if (!session) {
+                socket.emit('server error', "Session does not exist.");
+                return;
+            }
+
+            let player = session.players.find((player) => {
+                return player.id == data.playerId
+            })
+            if (player) {
+                player.role = data.role;
+                io.in(session.id).emit('session updated', session)
+            }
+        } catch (error) {
+            console.error(error)
+        }
     });
 
     socket.on('vote', (data) => {

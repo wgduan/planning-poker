@@ -24,8 +24,8 @@
                     <Icon type="person" size="24"></Icon>
                 </a>
                 <DropdownMenu slot="list" style="text-align:center;">
-                    <DropdownItem name="host" :selected="role=='host'">Host</DropdownItem>
                     <DropdownItem name="player" :selected="role=='player'">Player</DropdownItem>
+                    <DropdownItem name="observer" :selected="role=='observer'">Observer</DropdownItem>
                 </DropdownMenu>&nbsp;&nbsp;&nbsp;
             </Dropdown>            
             <Dropdown trigger="click" @on-click="menuClicked">
@@ -33,8 +33,9 @@
                     <Icon type="navicon-round" size="24"></Icon>
                 </a>
                 <DropdownMenu slot="list" style="text-align:center;">
+                    <DropdownItem name="host" :selected="this.isHost">Host</DropdownItem>
                     <DropdownItem name="refresh" >Refresh</DropdownItem>
-                    <DropdownItem v-if="this.role=='host'"  name="reset" >Reset</DropdownItem>
+                    <DropdownItem v-if="this.isHost"  name="reset" >Reset</DropdownItem>
                     <DropdownItem name="exit" >Exit</DropdownItem>
                 </DropdownMenu>&nbsp;&nbsp;&nbsp;
             </Dropdown>  
@@ -54,6 +55,14 @@
               <Input v-model="sessionId" placeholder="Enter Session ID..." size="large" />
           </Col>
       </Row>
+      <Row v-if="!sessionJoined">
+          <Col span="24">
+          <RadioGroup v-model="role">
+            <Radio label="player"><span>Player</span></Radio>
+            <Radio label="observer"><span>Observer</span></Radio>
+          </RadioGroup>
+          </Col>
+      </Row>
       <Row :gutter="5" v-if="!sessionJoined">
           <Col span="12" align="left">
                   <i-button type="primary" size="large" style="width:95%"  @click="joinSession">Join</i-button>
@@ -62,10 +71,10 @@
                   <i-button type="primary" size="large" style="width:95%"  @click="createSession">Create new session</i-button>
           </Col>
       </Row>
-      <Row v-if="sessionJoined">
+      <Row v-if="sessionJoined && role !='observer'">
           <Col span="24"><h3>Please vote your point.</h3></Col>
       </Row>
-      <Row v-if="sessionJoined">
+      <Row v-if="sessionJoined && role !='observer'">
           <Col span="24">                               
 
                   <RadioGroup v-model="point" type="button" @on-change="vote" size="large">
@@ -82,7 +91,7 @@
 
           </Col>
       </Row>
-      <Row :gutter="5"  v-if="sessionJoined && this.role=='host'">
+      <Row :gutter="5"  v-if="sessionJoined && this.isHost">
           <Col span="12" align="left">
                   <i-button type="primary" size="large" style="width:95%"  @click="toggleVotes">{{(this.session.showVotes)?'Hide':'Show'}} Votes</i-button>
           </Col>
@@ -100,8 +109,14 @@
       </Row>
       <Row  v-if="sessionJoined">
           <Col span="24" align="center">
-                  <Table :columns="columns" :data="session.players" size="large" no-data-text="No player">
+                  <Table :columns="columns" :data="players" size="large" no-data-text="No player">
                     <b slot="header">Votes</b>
+                  </Table>
+          </Col>
+      </Row>
+      <Row  v-if="sessionJoined">
+          <Col span="24" align="center">
+                  <Table :columns="observerColumns" :data="observers" size="large" no-data-text="No player">
                   </Table>
           </Col>
       </Row>
@@ -127,7 +142,7 @@ export default {
       socket: null,
       playerName: "",
       playerId: "",
-      role:"host",
+      role:"player",
       point: "",
       sessionJoined: false,
       sessionId: "",
@@ -135,6 +150,8 @@ export default {
       session: { id: "", showVotes: false },
       summary: [],
       showResetModal:false,
+      isHost:false,
+      //players:[],
       columns: [
         {
           title: "Name",
@@ -181,8 +198,23 @@ export default {
           key: "count",
           align: "center"
         }
-      ]
+      ],
+      observerColumns: [
+        {
+          title:"Observers",
+          key: "name",
+          align: "center"
+        },
+      ],
     };
+  },
+  computed:{
+    players(){
+      return this.session.players.filter(player=>player.role!='observer')
+    },
+    observers(){
+      return this.session.players.filter(player=>player.role=='observer')
+    },
   },
   methods: {
     createSession() {
@@ -199,7 +231,7 @@ export default {
         return;
       }
 
-      this.role='host'
+      this.isHost=true
       //Emit event
       this.socket.emit("create session", {
         name: this.playerName,
@@ -227,9 +259,10 @@ export default {
         });
         return;
       }
-      this.role='player'
+      //this.role='player'
       //Emit event
       this.socket.emit("join session", {
+        isHost:false,
         name: this.playerName,
         playerId: this.playerId,
         role:this.role,
@@ -238,9 +271,18 @@ export default {
     },
     changeRole(role){
       this.role=role;
+      this.socket.emit('change role',{
+        name:this.playerName,
+        playerId:this.playerId,
+        role:this.role,
+        sessionId:this.sessionId
+      })
     },
     menuClicked(menu){
       switch (menu) {
+        case 'host':
+          this.isHost=!this.isHost;
+          break;
         case 'refresh':
             this.refreshSession();
           break;
@@ -403,6 +445,9 @@ export default {
         if (session.showVotes) {
           this.summary = [];
           this.session.players.forEach(player => {
+            if(player.role=='observer'){
+              return;
+            }
             let result = this.summary.find(result => {
               return result.point == player.point;
             });
