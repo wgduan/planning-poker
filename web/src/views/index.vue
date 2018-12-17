@@ -78,6 +78,7 @@
           <Col span="24">                               
 
                   <RadioGroup v-model="point" type="button" @on-change="vote" size="large">
+                      <Radio label="0.5"></Radio>
                       <Radio label="1"></Radio>
                       <Radio label="2"></Radio>
                       <Radio label="3"></Radio>
