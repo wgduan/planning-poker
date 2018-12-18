@@ -7,7 +7,7 @@ var path = require('path');
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
-io.set( 'origins', '*:*' );
+io.set('origins', '*:*');
 
 var port = process.env.PORT || 8080;
 
@@ -45,6 +45,11 @@ var uuidv1 = require('uuid/v1');
 // Routing
 app.use(express.static(path.join(__dirname, '../public')));
 
+app.get("/sessions", (req, res) => {
+
+    res.json(sessions);
+    //res.send(JSON.stringify(sessions, null, "\t"));
+});
 
 //app
 var sessions = [];
@@ -69,7 +74,7 @@ io.on('connection', (socket) => {
     socket.on('create session', (data) => {
         try {
             //data: {name:'name',playerId:'',role='',sessionId:''}
-            console.log('create session:'+JSON.stringify(data));
+            console.log('create session:' + JSON.stringify(data));
             let sessionId = (data.sessionId == '') ? uuidv1() : data.sessionId;
 
             let session = sessions.find(session => {
@@ -95,7 +100,7 @@ io.on('connection', (socket) => {
                     role: data.role,
                     point: '',
                     status: 'connected',
-                    sessionJoined:true,
+                    sessionJoined: true,
                     id: (data.playerId == "") ? uuidv1() : data.playerId,
                 }]
             };
@@ -110,7 +115,7 @@ io.on('connection', (socket) => {
     socket.on('join session', (data) => {
         //data: {name:'name',playerId:'',role='',sessionId:'1'}
         try {
-            console.log('join session:'+JSON.stringify(data));
+            console.log('join session:' + JSON.stringify(data));
 
             let session = sessions.find((session) => {
                 return session.id == data.sessionId
@@ -137,8 +142,8 @@ io.on('connection', (socket) => {
             }
             player.name = data.name
             player.status = 'connected'
-            sessionJoined=true
-            player.role=(data.role)?data.role:'player'
+            sessionJoined = true
+            player.role = (data.role) ? data.role : 'player'
             socket.emit('session joined', session)
             socket.broadcast.to(session.id).emit('player joined', player)
             socket.broadcast.to(session.id).emit('session updated', session)
@@ -151,7 +156,7 @@ io.on('connection', (socket) => {
     socket.on('change role', (data) => {
         //data: {sessionId:'1',playerId:'1',name:'name',role:'host|player|observer'}
         try {
-            console.log('vote:'+JSON.stringify(data));
+            console.log('vote:' + JSON.stringify(data));
             socket.playerName = data.name;
             socket.sessionId = data.sessionId
             socket.playerId = data.playerId
@@ -179,7 +184,7 @@ io.on('connection', (socket) => {
     socket.on('vote', (data) => {
         //data: {name:'name',playerId:'',sessionId:'1', point:'2'}
         try {
-            console.log('vote:'+JSON.stringify(data));
+            console.log('vote:' + JSON.stringify(data));
             socket.playerName = data.name;
             socket.sessionId = data.sessionId
             socket.playerId = data.playerId
@@ -208,7 +213,7 @@ io.on('connection', (socket) => {
     socket.on('clean votes', (data) => {
         //data: {name:'name',playerId:'',sessionId:'1'}
         try {
-            console.log('clean votes:'+JSON.stringify(data));
+            console.log('clean votes:' + JSON.stringify(data));
             socket.playerName = data.name;
             socket.sessionId = data.sessionId
             socket.playerId = data.playerId
@@ -235,7 +240,7 @@ io.on('connection', (socket) => {
     socket.on('toggle votes', (data) => {
         //data: {name:'name',playerId:'',sessionId:'1'}
         try {
-            console.log('toggle votes:'+JSON.stringify(data));
+            console.log('toggle votes:' + JSON.stringify(data));
             socket.playerName = data.name;
             socket.sessionId = data.sessionId
             socket.playerId = data.playerId
@@ -259,7 +264,7 @@ io.on('connection', (socket) => {
     socket.on('refresh session', data => {
         //data: {name:'name',playerId:'',sessionId:'1'}
         try {
-            console.log('refresh session:'+JSON.stringify(data));
+            console.log('refresh session:' + JSON.stringify(data));
             socket.playerName = data.name;
             socket.sessionId = data.sessionId
             socket.playerId = data.playerId
@@ -280,7 +285,7 @@ io.on('connection', (socket) => {
     socket.on('reset session', data => {
         //data: {playerId:'',sessionId:'1'}
         try {
-            console.log('reset session:'+JSON.stringify(data));
+            console.log('reset session:' + JSON.stringify(data));
             socket.sessionId = data.sessionId
             socket.playerId = data.playerId
 
@@ -293,7 +298,7 @@ io.on('connection', (socket) => {
             }
 
             session.showVotes = false;
-            session.players=[];
+            session.players = [];
 
 
             socket.emit('session reseted', session);
@@ -305,7 +310,7 @@ io.on('connection', (socket) => {
     socket.on('quit session', data => {
         //data: {name:'',playerId:'',sessionId:''}
         try {
-            console.log('quit session:'+JSON.stringify(data));
+            console.log('quit session:' + JSON.stringify(data));
 
             let session = sessions.find((session) => {
                 return session.id == data.sessionId
@@ -327,9 +332,9 @@ io.on('connection', (socket) => {
     });
 
 
-    socket.on('player connect',data=>{
+    socket.on('player connect', data => {
         try {
-            console.log('player connect:'+JSON.stringify(data));
+            console.log('player connect:' + JSON.stringify(data));
             socket.playerName = data.name;
             socket.sessionId = data.sessionId
             socket.playerId = data.playerId
@@ -342,9 +347,8 @@ io.on('connection', (socket) => {
                 let player = session.players.find((player) => {
                     return player.id == data.playerId
                 })
-                if(player)
-                {
-                    player.status='connected'
+                if (player) {
+                    player.status = 'connected'
                     //socket.broadcast.to(session.id).emit('player connected',player)
                     io.in(session.id).emit('session updated', session)
                 }
