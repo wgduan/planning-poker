@@ -15,7 +15,7 @@
   "author": "Aresn",
   "license": "MIT",
   "dependencies": {
-    "iview": "^2.0.0-rc.8",
+    "iview": "^3.2.1",
     "promise-polyfill": "8.0.0",
     "socket.io": "^2.1.1",
     "uuid": "^3.3.2",

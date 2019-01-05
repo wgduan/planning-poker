@@ -21,7 +21,7 @@
             <!-- <a href="Javascript:void(0);" @click="refreshSession" title="Refresh"><Icon type="person" size="24"></Icon></a>&nbsp;&nbsp;&nbsp; -->
             <Dropdown trigger="click" @on-click="changeRole">
                 <a href="javascript:void(0)">
-                    <Icon type="person" size="24"></Icon>
+                    <Icon type="md-person" size="24"></Icon>
                 </a>
                 <DropdownMenu slot="list" style="text-align:center;">
                     <DropdownItem name="player" :selected="role=='player'">Player</DropdownItem>
@@ -30,7 +30,7 @@
             </Dropdown>            
             <Dropdown trigger="click" @on-click="menuClicked">
                 <a href="javascript:void(0)">
-                    <Icon type="navicon-round" size="24"></Icon>
+                    <Icon type="md-menu" size="24"></Icon>
                 </a>
                 <DropdownMenu slot="list" style="text-align:center;">
                     <DropdownItem name="host" :selected="this.isHost">Host</DropdownItem>
@@ -117,7 +117,7 @@
       </Row>
       <Row  v-if="sessionJoined">
           <Col span="24" align="center">
-                  <Table :columns="observerColumns" :data="observers" size="large" no-data-text="No player">
+                  <Table :columns="observerColumns" :data="observers" size="large" no-data-text="No observer">
                   </Table>
           </Col>
       </Row>
@@ -127,7 +127,7 @@
       <br/>
       <Row type="flex" align="middle">
         <Col span="24" align="center">
-          @ 2018 David Duan &nbsp;&nbsp;<a href="https://github.com/wgduan/planning-poker" ><Icon type="social-github" size="24" color="gray"></Icon></a>
+          @ 2018 David Duan &nbsp;&nbsp;<a href="https://github.com/wgduan/planning-poker" ><Icon type="logo-github" size="24" color="gray"></Icon></a>
         </Col>
       </Row>
     </div>
@@ -176,11 +176,11 @@ export default {
             if (this.session.showVotes || params.row.name == this.playerName) {
               return params.row.point > 0
                 ? h("span", params.row.point)
-                : h("Icon", { props: { type: "help" } });
+                : h("Icon", { props: { type: "md-help" } });
             } else {
               return h("Icon", {
                 props: {
-                  type: params.row.point > 0 ? "checkmark-round" : "help",
+                  type: params.row.point > 0 ? "md-checkmark-circle" : "md-help",
                   color: params.row.point > 0 ? "lightgreen" : ""
                 }
               });
