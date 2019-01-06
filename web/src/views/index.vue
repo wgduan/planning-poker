@@ -13,38 +13,39 @@
 </style>
 <template>
     <div style="max-width:400px;margin:0 auto; text-align:center;" >
-
-      <Row type="flex" style="background-color:#eee;padding:10px;" align="middle">
-        <Col span="12" align="left"><h2>Planning Poker</h2> </Col>
-        <Col span="12" align="right">
-          <div v-if="sessionJoined">
-            <!-- <a href="Javascript:void(0);" @click="refreshSession" title="Refresh"><Icon type="person" size="24"></Icon></a>&nbsp;&nbsp;&nbsp; -->
-            <Dropdown trigger="click" @on-click="changeRole">
-                <a href="javascript:void(0)">
-                    <Icon type="md-person" size="24"></Icon>
-                </a>
-                <DropdownMenu slot="list" style="text-align:center;">
-                    <DropdownItem name="player" :selected="role=='player'">Player</DropdownItem>
-                    <DropdownItem name="observer" :selected="role=='observer'">Observer</DropdownItem>
-                </DropdownMenu>&nbsp;&nbsp;&nbsp;
-            </Dropdown>            
-            <Dropdown trigger="click" @on-click="menuClicked">
-                <a href="javascript:void(0)">
-                    <Icon type="md-menu" size="24"></Icon>
-                </a>
-                <DropdownMenu slot="list" style="text-align:center;">
-                    <DropdownItem name="host" :selected="this.isHost">Host</DropdownItem>
-                    <DropdownItem name="refresh" >Refresh</DropdownItem>
-                    <DropdownItem v-if="this.isHost"  name="reset" >Reset</DropdownItem>
-                    <DropdownItem name="exit" >Exit</DropdownItem>
-                </DropdownMenu>&nbsp;&nbsp;&nbsp;
-            </Dropdown>  
-            <Modal v-model="showResetModal" @on-ok="resetSession" title="Warning">
-                <p><h3>Reset session will drop everyone in this session, continue to reset session?</h3></p>
-            </Modal>              
-          </div>
-        </Col>
-      </Row>
+      <Affix>
+        <Row type="flex" style="background-color:#eee;padding:10px;" align="middle">
+          <Col span="12" align="left"><h2>Planning Poker</h2> </Col>
+          <Col span="12" align="right">
+            <div v-if="sessionJoined">
+              <!-- <a href="Javascript:void(0);" @click="refreshSession" title="Refresh"><Icon type="person" size="24"></Icon></a>&nbsp;&nbsp;&nbsp; -->
+              <Dropdown trigger="click" @on-click="changeRole">
+                  <a href="javascript:void(0)">
+                      <Icon type="md-person" size="24"></Icon>
+                  </a>
+                  <DropdownMenu slot="list" style="text-align:center;">
+                      <DropdownItem name="player" :selected="role=='player'">Player</DropdownItem>
+                      <DropdownItem name="observer" :selected="role=='observer'">Observer</DropdownItem>
+                  </DropdownMenu>&nbsp;&nbsp;&nbsp;
+              </Dropdown>            
+              <Dropdown trigger="click" @on-click="menuClicked">
+                  <a href="javascript:void(0)">
+                      <Icon type="md-menu" size="24"></Icon>
+                  </a>
+                  <DropdownMenu slot="list" style="text-align:center;">
+                      <DropdownItem name="host" :selected="this.isHost">Host</DropdownItem>
+                      <DropdownItem name="refresh" >Refresh</DropdownItem>
+                      <DropdownItem v-if="this.isHost"  name="reset" >Reset</DropdownItem>
+                      <DropdownItem name="exit" >Exit</DropdownItem>
+                  </DropdownMenu>&nbsp;&nbsp;&nbsp;
+              </Dropdown>  
+              <Modal v-model="showResetModal" @on-ok="resetSession" title="Warning">
+                  <p><h3>Reset session will drop everyone in this session, continue to reset session?</h3></p>
+              </Modal>              
+            </div>
+          </Col>
+        </Row>
+      </Affix>
       <Row v-if="!sessionJoined">
           <Col span="24">
               <Input v-model="playerName" placeholder="Enter your name..." size="large"  />
