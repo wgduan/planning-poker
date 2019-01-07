@@ -1,10 +1,13 @@
 # Planning Poker web project
 
-This project is build for Vue.js 2 + vue-router + webpack2 + iView 2, just install and run.
+This project is built by vue + vue-cli + vue-router + iView, just install and run.
 
 ## Install
 
 ```bush
+// install vue-cli
+npm install -g @vue/cli
+
 // install dependencies
 npm install
 ```
@@ -14,7 +17,6 @@ npm install
 ### Development
 
 ```bush
-// For the first time, run init to create index.html
 npm run dev
 ```
 

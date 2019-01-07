@@ -1,4 +1,4 @@
-<style scoped lang="less">
+<style scoped>
 .index {
   max-width: 400px;
 }
@@ -39,7 +39,7 @@
                       <DropdownItem name="exit" >Exit</DropdownItem>
                   </DropdownMenu>&nbsp;&nbsp;&nbsp;
               </Dropdown>  
-              <Modal v-model="showResetModal" @on-ok="resetSession" title="Warning">
+              <Modal v-model="showResetModal" @on-ok="resetSession" title="Warning" ok-text="OK">
                   <p><h3>Reset session will drop everyone in this session, continue to reset session?</h3></p>
               </Modal>              
             </div>
@@ -135,7 +135,7 @@
 </template>
 <script>
 import io from "socket.io-client";
-import AppConfig from '../config/config.js'
+import AppConfig from '../config.js'
 var uuidv1 = require("uuid/v1");
 
 export default {
@@ -357,10 +357,11 @@ export default {
       });
     },    
     initSocket(){
-      this.socket = io(AppConfig.socketIOUrl);
+      //console.log(process.env.VUE_APP_SOCKETIO_URL);
+      this.socket = io(AppConfig.SOCKETIO_URL);
 
       this.socket.on("session created", session => {
-        console.log("session created: " + JSON.stringify(session));
+        //console.log("session created: " + JSON.stringify(session));
         this.session = session;
         this.sessionId = session.id;
         this.point = "";
@@ -371,7 +372,7 @@ export default {
       });
 
       this.socket.on("session joined", session => {
-        console.log("session joined: " + session);
+        //console.log("session joined: " + session);
         this.session = session;
         this.sessionId = session.id;
         this.point = "";
@@ -381,7 +382,7 @@ export default {
       });
 
       this.socket.on("player joined", data => {
-        console.log("player joined " + data);
+        //console.log("player joined " + data);
         //this.session.players.push(data);
         this.$Notice.open({
           title: data.name + " joined."
@@ -389,7 +390,7 @@ export default {
       });
 
       this.socket.on("player left", data => {
-        console.log("player left " + data);
+        //console.log("player left " + data);
         // this.session.players = this.session.players.filter(
         //   player => player.name != data.name
         // );
@@ -471,15 +472,15 @@ export default {
   },
 
   created() {
-    console.log(this.$route.params.id);
-    console.log(this.playerId);
+    //console.log(this.$route.params.id);
+    //console.log(this.playerId);
 
     this.playerId = window.localStorage.getItem("playerId");
     if (this.playerId == null) {
       this.playerId = uuidv1();
       window.localStorage.setItem("playerId", this.playerId);
     }
-    console.log(this.playerId);
+    //console.log(this.playerId);
 
     if (this.$route.params.id) {
       this.sessionId = this.$route.params.id;
