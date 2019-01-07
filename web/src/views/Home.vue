@@ -39,7 +39,7 @@
                       <DropdownItem name="exit" >Exit</DropdownItem>
                   </DropdownMenu>&nbsp;&nbsp;&nbsp;
               </Dropdown>  
-              <Modal v-model="showResetModal" @on-ok="resetSession" title="Warning" ok-text="OK">
+              <Modal v-model="showResetModal" @on-ok="resetSession" title="Warning">
                   <p><h3>Reset session will drop everyone in this session, continue to reset session?</h3></p>
               </Modal>              
             </div>
