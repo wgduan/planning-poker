@@ -9,7 +9,7 @@ var io = require('socket.io')(server);
 
 io.set('origins', '*:*');
 
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 8000;
 
 
 server.listen(port, () => {
@@ -28,7 +28,7 @@ server.listen(port, () => {
 // var certificate = fs.readFileSync(path.join(__dirname, '../cert/fullchain.pem'), 'utf8');
 // var credentials = {key: privateKey, cert: certificate};
 // var server = https.createServer(credentials, app);
-// var port = 8080;
+// var port = 8000;
 // var io = require('socket.io')(server);
 // server.listen(port, () => {
 //     console.log('Server listening at port %d', port);
