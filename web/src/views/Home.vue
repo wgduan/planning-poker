@@ -1,6 +1,6 @@
 <style scoped>
 .index {
-  max-width: 400px;
+  max-width: 512px;
 }
 .layout {
   width: 100%;
@@ -12,7 +12,7 @@
 }
 </style>
 <template>
-    <div style="max-width:400px;margin:0 auto; text-align:center;" >
+    <div style="max-width:512px;margin:0 auto; text-align:center;" >
       <Affix>
         <Row type="flex" style="background-color:#eee;padding:10px;" align="middle">
           <Col span="12" align="left"><h2>Planning Poker</h2> </Col>
@@ -128,7 +128,7 @@
       <br/>
       <Row type="flex" align="middle">
         <Col span="24" align="center">
-          @ 2018 David Duan &nbsp;&nbsp;<a href="https://github.com/wgduan/planning-poker" ><Icon type="logo-github" size="24" color="gray"></Icon></a>
+          @ 2018 David Duan &nbsp;&nbsp;<a href="https://github.com/wgduan/planning-poker" target="_blank"><Icon type="logo-github" size="24" color="gray"></Icon></a>
         </Col>
       </Row>
     </div>
