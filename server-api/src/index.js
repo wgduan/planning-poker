@@ -9,7 +9,7 @@ var io = require('socket.io')(server);
 
 io.set('origins', '*:*');
 
-var port = process.env.PORT || 8000;
+var port = process.env.PORT || 8080;
 
 
 server.listen(port, () => {
