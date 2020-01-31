@@ -75,7 +75,7 @@ io.on('connection', (socket) => {
         try {
             //data: {name:'name',playerId:'',role='',sessionId:''}
             console.log('create session:' + JSON.stringify(data));
-            let sessionId = (data.sessionId == '') ? uuidv1() : data.sessionId;
+            let sessionId = (data.sessionId == '') ? uuidv1().toLowerCase() : data.sessionId.toLowerCase();
 
             let session = sessions.find(session => {
                 return session.id == sessionId;
@@ -102,6 +102,7 @@ io.on('connection', (socket) => {
                     status: 'connected',
                     sessionJoined: true,
                     id: (data.playerId == "") ? uuidv1() : data.playerId,
+                    joinTime:Date.now(),
                 }]
             };
             sessions.push(session);
@@ -117,6 +118,8 @@ io.on('connection', (socket) => {
         try {
             console.log('join session:' + JSON.stringify(data));
 
+            data.sessionId=data.sessionId.toLowerCase();
+
             let session = sessions.find((session) => {
                 return session.id == data.sessionId
             });
@@ -124,6 +127,12 @@ io.on('connection', (socket) => {
                 socket.emit('server error', "Session does not exist.");
                 return;
             }
+
+            //filter expired players
+            session.players = session.players.filter(
+                player => player.joinTime > Date.now()-4*3600*1000
+            );            
+
             let player = session.players.find(player => {
                 return player.id == data.playerId
             })
@@ -144,6 +153,7 @@ io.on('connection', (socket) => {
             player.status = 'connected'
             sessionJoined = true
             player.role = (data.role) ? data.role : 'player'
+            player.joinTime=joinTime=Date.now()
             socket.emit('session joined', session)
             socket.broadcast.to(session.id).emit('player joined', player)
             socket.broadcast.to(session.id).emit('session updated', session)
@@ -157,6 +167,9 @@ io.on('connection', (socket) => {
         //data: {sessionId:'1',playerId:'1',name:'name',role:'host|player|observer'}
         try {
             console.log('vote:' + JSON.stringify(data));
+
+            data.sessionId=data.sessionId.toLowerCase();
+
             socket.playerName = data.name;
             socket.sessionId = data.sessionId
             socket.playerId = data.playerId
@@ -185,6 +198,7 @@ io.on('connection', (socket) => {
         //data: {name:'name',playerId:'',sessionId:'1', point:'2'}
         try {
             console.log('vote:' + JSON.stringify(data));
+            data.sessionId=data.sessionId.toLowerCase();
             socket.playerName = data.name;
             socket.sessionId = data.sessionId
             socket.playerId = data.playerId
@@ -214,6 +228,7 @@ io.on('connection', (socket) => {
         //data: {name:'name',playerId:'',sessionId:'1'}
         try {
             console.log('clean votes:' + JSON.stringify(data));
+            data.sessionId=data.sessionId.toLowerCase();
             socket.playerName = data.name;
             socket.sessionId = data.sessionId
             socket.playerId = data.playerId
@@ -241,6 +256,7 @@ io.on('connection', (socket) => {
         //data: {name:'name',playerId:'',sessionId:'1'}
         try {
             console.log('toggle votes:' + JSON.stringify(data));
+            data.sessionId=data.sessionId.toLowerCase();
             socket.playerName = data.name;
             socket.sessionId = data.sessionId
             socket.playerId = data.playerId
@@ -265,6 +281,7 @@ io.on('connection', (socket) => {
         //data: {name:'name',playerId:'',sessionId:'1'}
         try {
             console.log('refresh session:' + JSON.stringify(data));
+            data.sessionId=data.sessionId.toLowerCase();
             socket.playerName = data.name;
             socket.sessionId = data.sessionId
             socket.playerId = data.playerId
@@ -286,6 +303,7 @@ io.on('connection', (socket) => {
         //data: {playerId:'',sessionId:'1'}
         try {
             console.log('reset session:' + JSON.stringify(data));
+            data.sessionId=data.sessionId.toLowerCase();
             socket.sessionId = data.sessionId
             socket.playerId = data.playerId
 
@@ -311,6 +329,7 @@ io.on('connection', (socket) => {
         //data: {name:'',playerId:'',sessionId:''}
         try {
             console.log('quit session:' + JSON.stringify(data));
+            data.sessionId=data.sessionId.toLowerCase();
 
             let session = sessions.find((session) => {
                 return session.id == data.sessionId
@@ -335,6 +354,7 @@ io.on('connection', (socket) => {
     socket.on('player connect', data => {
         try {
             console.log('player connect:' + JSON.stringify(data));
+            data.sessionId=data.sessionId.toLowerCase();
             socket.playerName = data.name;
             socket.sessionId = data.sessionId
             socket.playerId = data.playerId
